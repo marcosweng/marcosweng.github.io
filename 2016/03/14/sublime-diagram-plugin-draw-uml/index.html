@@ -1,0 +1,803 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+  <link href="/vendors/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css"/>
+
+
+
+
+  <link href="//fonts.googleapis.com/css?family=Lato:300,400,700,400italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+
+
+
+<link href="/vendors/font-awesome/css/font-awesome.min.css?v=4.4.0" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="-Sublime Text -UML -工具," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=0.5.0" />
+
+
+
+
+
+
+<meta name="description" content="程序员在写文档时，需要经常进行时序图，流程图，状态图的绘制，对于程序员来说直接写伪代码进行画图，大部分情况下都会比使用工具进行拖拽来的方便，Sublime diagram plugin是Sublime下的一款UML插件，使用python语言编写，帮助我们实现快速的使用伪代码进行画图。
+
+插件安装安装Graphviz在OSX下，使用brew命令安装Graphviz,具体如下：
+1brew inst">
+<meta property="og:type" content="article">
+<meta property="og:title" content="使用Sublime Text插件：sublime_diagram_plugin进行作图">
+<meta property="og:url" content="http://yoursite.com/2016/03/14/sublime-diagram-plugin-draw-uml/index.html">
+<meta property="og:site_name" content="Marcos">
+<meta property="og:description" content="程序员在写文档时，需要经常进行时序图，流程图，状态图的绘制，对于程序员来说直接写伪代码进行画图，大部分情况下都会比使用工具进行拖拽来的方便，Sublime diagram plugin是Sublime下的一款UML插件，使用python语言编写，帮助我们实现快速的使用伪代码进行画图。
+
+插件安装安装Graphviz在OSX下，使用brew命令安装Graphviz,具体如下：
+1brew inst">
+<meta property="og:image" content="http://yoursite.com/uploads/images/uml/example1-jseyme.png">
+<meta property="og:image" content="http://yoursite.com/uploads/images/uml/example1-1xozka.png">
+<meta property="og:image" content="http://yoursite.com/uploads/images/uml/example1-jzv639.png">
+<meta property="og:image" content="http://yoursite.com/uploads/images/uml/http-fijxvo.png">
+<meta property="og:updated_time" content="2016-03-14T15:48:51.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="使用Sublime Text插件：sublime_diagram_plugin进行作图">
+<meta name="twitter:description" content="程序员在写文档时，需要经常进行时序图，流程图，状态图的绘制，对于程序员来说直接写伪代码进行画图，大部分情况下都会比使用工具进行拖拽来的方便，Sublime diagram plugin是Sublime下的一款UML插件，使用python语言编写，帮助我们实现快速的使用伪代码进行画图。
+
+插件安装安装Graphviz在OSX下，使用brew命令安装Graphviz,具体如下：
+1brew inst">
+<meta name="twitter:image" content="http://yoursite.com/uploads/images/uml/example1-jseyme.png">
+
+
+
+<script type="text/javascript" id="hexo.configuration">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    scheme: 'Mist',
+    sidebar: {"position":"right","display":"post"},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: 0,
+      author: '博主'
+    }
+  };
+</script>
+
+  <title> 使用Sublime Text插件：sublime_diagram_plugin进行作图 | Marcos </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+  <script type="text/javascript">
+    var _hmt = _hmt || [];
+    (function() {
+      var hm = document.createElement("script");
+      hm.src = "//hm.baidu.com/hm.js?3b9158c8a4d466aadd6810a0366806e9";
+      var s = document.getElementsByTagName("script")[0];
+      s.parentNode.insertBefore(hm, s);
+    })();
+  </script>
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container one-collumn sidebar-position-right page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-meta ">
+  
+
+  <div class="custom-logo-site-title">
+    <a href="/"  class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <span class="site-title">Marcos</span>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+  </div>
+  <p class="site-subtitle"></p>
+</div>
+
+<div class="site-nav-toggle">
+  <button>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+    <span class="btn-bar"></span>
+  </button>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-home fa-fw"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-categories">
+          <a href="/categories" rel="section">
+            
+              <i class="menu-item-icon fa fa-th fa-fw"></i> <br />
+            
+            分类
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-about">
+          <a href="/about" rel="section">
+            
+              <i class="menu-item-icon fa fa-user fa-fw"></i> <br />
+            
+            关于
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-archive fa-fw"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-tags fa-fw"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                使用Sublime Text插件：sublime_diagram_plugin进行作图
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-03-14T22:33:25+08:00" content="2016-03-14">
+              2016-03-14
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/工具说明/" itemprop="url" rel="index">
+                    <span itemprop="name">工具说明</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/14/sublime-diagram-plugin-draw-uml/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/14/sublime-diagram-plugin-draw-uml/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>程序员在写文档时，需要经常进行时序图，流程图，状态图的绘制，对于程序员来说直接写伪代码进行画图，大部分情况下都会比使用工具进行拖拽来的方便，Sublime diagram plugin是Sublime下的一款UML插件，使用python语言编写，帮助我们实现快速的使用伪代码进行画图。</p>
+</blockquote>
+<h1 id="插件安装"><a href="#插件安装" class="headerlink" title="插件安装"></a>插件安装</h1><h2 id="安装Graphviz"><a href="#安装Graphviz" class="headerlink" title="安装Graphviz"></a>安装Graphviz</h2><p>在OSX下，使用brew命令安装Graphviz,具体如下：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">brew install graphviz</span><br></pre></td></tr></table></figure>
+<h2 id="安装Sublime-Text"><a href="#安装Sublime-Text" class="headerlink" title="安装Sublime Text"></a>安装Sublime Text</h2><h2 id="安装插件"><a href="#安装插件" class="headerlink" title="安装插件"></a>安装插件</h2><p>目前暂时没发现此插件可以使用Sublime Text的Package Control进行直接安装，只能上GitHub：<a href="https://github.com/jvantuyl/sublime_diagram_plugin" target="_blank" rel="external">插件GitHub地址</a>上下载该插件，解压后，打开Sublime Text的Preferences的Broswe Packages，进入Sublime Text的包路径，将解压后的插件内容放入改路径下，重启Sublime Text即可。</p>
+<h1 id="插件使用"><a href="#插件使用" class="headerlink" title="插件使用"></a>插件使用</h1><p>每种UML图的伪代码各不相同，但都是以@startuml开头，以@enduml结尾</p>
+<h2 id="绘制组件图"><a href="#绘制组件图" class="headerlink" title="绘制组件图"></a>绘制组件图</h2><p>组件图主要用来绘制部署图，或者是系统的拓扑图。</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">skinparam component &#123;</span><br><span class="line">  Style uml2</span><br><span class="line">  BackgroundColor #FEFECE</span><br><span class="line">&#125;</span><br><span class="line">node &quot;Database Server&quot; &#123;</span><br><span class="line">  database &quot;MSSQL / ORA \n &quot; &#123;</span><br><span class="line">    [DB] as DB</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">node &quot;Business Logic Server&quot; &#123;</span><br><span class="line">  frame &quot;Windows Service Host&quot; &#123;</span><br><span class="line">    package &quot;GUIService&quot; &#123;</span><br><span class="line">      [GuiService] as GuiService</span><br><span class="line">    &#125;</span><br><span class="line">    package &quot;ExtService&quot; &#123;</span><br><span class="line">      [ExtService] as ExtService</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">node &quot;Update Server \n (can be hosted on \n BL Server)&quot; &#123;</span><br><span class="line">  folder &quot;Remote Storage&quot; &#123;</span><br><span class="line">    [System Storage] as UpdateStorage</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">node &quot;Client Computer&quot; &#123;</span><br><span class="line">  folder &quot;Local Storage&quot; &#123;</span><br><span class="line">    [System Client] as Client</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">cloud &quot;External Systems&quot; &#123;</span><br><span class="line">  [External Systems] as ExtSystem</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">cloud &quot;Service Locator&quot; &#123;</span><br><span class="line">  [Service Locator] as ServiceLocator</span><br><span class="line">&#125;</span><br><span class="line">cloud &quot;OSSBSS Services&quot; &#123;</span><br><span class="line">  [OSSBSS Services] as OSSBSS</span><br><span class="line">&#125;</span><br><span class="line">cloud &quot;Security \n (Authority \n Service)&quot; &#123;</span><br><span class="line">  [OSSBSS Security] as Security</span><br><span class="line">&#125;</span><br><span class="line">[Client]          --&gt; [GuiService]      : WCF HTTP/TCP</span><br><span class="line">[ExtSystem]       --&gt; [ExtService]      : WCF HTTP</span><br><span class="line">[GuiService]      --&gt; [DB]              : OSSBSS.DbAccessLayer</span><br><span class="line">[GuiService]      --&gt; [UpdateStorage]   : SMB</span><br><span class="line">[GuiService]      --&gt; [Security]        : WCF</span><br><span class="line">[GuiService]      --&gt; [ServiceLocator]  : WCF</span><br><span class="line">[ServiceLocator]  --&gt; [OSSBSS]          : WCF</span><br><span class="line">[ExtService]      --&gt; [DB]              : OSSBSS.DbAccessLayer</span><br><span class="line">[ExtService]      ..&gt; [GuiService]      : inproc</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<p><img src="/uploads/images/uml/example1-jseyme.png" alt="组件图"></p>
+<ul>
+<li>使用[<em>*</em>]来表示组件</li>
+<li>多个组件可以合在一个包里</li>
+<li>使用关键字cloud,database,node生成不同种类的图像</li>
+<li>包内的组件可以使用-和-&gt;来表达同个包内各个组件的关系</li>
+<li>可以在包之间和包和组件之间使用箭头来表达关系</li>
+</ul>
+<h2 id="绘制时序图"><a href="#绘制时序图" class="headerlink" title="绘制时序图"></a>绘制时序图</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">actor alice #green</span><br><span class="line">alice -&gt; bob : 发起认证请求</span><br><span class="line">bob --&gt; alice : 响应认证请求</span><br><span class="line">===认证===</span><br><span class="line">alice -&gt; bob : 另一发起认证请求</span><br><span class="line">alice &lt;-- bob : 另一响应认证请求</span><br><span class="line">alice -&gt; alice : 这是我自己的请求</span><br><span class="line">alice -&gt; 小明 : 你好</span><br><span class="line">bob --&gt; 小明 :测试一下更多的</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<p><img src="/uploads/images/uml/example1-1xozka.png" alt="时序图"></p>
+<ul>
+<li>用-&gt;和–&gt;表示箭头</li>
+<li>actor alice 后面#可以指定发起者的颜色</li>
+<li>===**===用来分割时序图</li>
+</ul>
+<h2 id="绘制类图"><a href="#绘制类图" class="headerlink" title="绘制类图"></a>绘制类图</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">@startuml </span><br><span class="line"> skinparam classAttributeIconSize 12</span><br><span class="line"> interface TestInterface &#123;</span><br><span class="line">     +method2()</span><br><span class="line"> &#125;</span><br><span class="line"> class Test &lt;&lt; 主函数 &gt;&gt; implements TestInterface&#123; </span><br><span class="line">     -Function1 </span><br><span class="line">     +Function2 </span><br><span class="line">     #Function3 </span><br><span class="line">     ~Function4 </span><br><span class="line">     ~method1() </span><br><span class="line">     +method2() </span><br><span class="line">     #method3() </span><br><span class="line">     ~method4() </span><br><span class="line"> &#125; </span><br><span class="line"> Test &lt;|-- Test2 </span><br><span class="line"> Test1 o-- Test2 </span><br><span class="line"> Test *-- Test3: 调用</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<p><img src="/uploads/images/uml/example1-jzv639.png" alt="image"></p>
+<ul>
+<li>+，-，~，#分别表示公有，私有，protected，默认</li>
+</ul>
+<h2 id="绘制流程图"><a href="#绘制流程图" class="headerlink" title="绘制流程图"></a>绘制流程图</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line">@startuml</span><br><span class="line">start</span><br><span class="line">:根据组件配置的资源ID查找资源信息;</span><br><span class="line">if (&quot;找到资源信息&quot;) then (yes)</span><br><span class="line">	if (&quot;找到主机信息&quot;) then (yes)</span><br><span class="line">		:构造访问地址与HTTP请求相关信息;</span><br><span class="line">		:根据资源信息配置，构造请求报文内容;</span><br><span class="line">		:发起HTTP请求;</span><br><span class="line">		if (&quot;连接失败&quot;) then (yes)</span><br><span class="line">			if (&quot;是否重试&quot;) then (yes)</span><br><span class="line">				:重新发起连接;</span><br><span class="line">				if(&quot;http响应状态是否为200&quot;) then(yes)</span><br><span class="line">					:根据资源配置的响应读写器读取响应信息;</span><br><span class="line">					:将响应内容返回;</span><br><span class="line">				else (no)</span><br><span class="line">					:构造异常返回信息;</span><br><span class="line">				endif</span><br><span class="line">			else (no)</span><br><span class="line">				:返回HTTP连接超时错误;</span><br><span class="line">			endif</span><br><span class="line">		else</span><br><span class="line">			if(&quot;http响应状态是否为200&quot;) then(yes)</span><br><span class="line">				:根据资源配置的响应读写器读取响应信息;</span><br><span class="line">				:将响应内容返回;</span><br><span class="line">			else (no)</span><br><span class="line">				:构造异常返回信息;</span><br><span class="line">			endif</span><br><span class="line">		endif</span><br><span class="line">	else (no)</span><br><span class="line">		:返回主机信息无法找到异常;</span><br><span class="line">	endif</span><br><span class="line">else (no)</span><br><span class="line">	:返回无法根据对应的资源ID找到对应的资源异常;</span><br><span class="line">endif</span><br><span class="line">end</span><br><span class="line">@enduml</span><br></pre></td></tr></table></figure>
+<p><img src="/uploads/images/uml/http-fijxvo.png" alt="流程图"></p>
+
+      
+    </div>
+
+    <div>
+      
+        
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Sublime-Text-UML-工具/" rel="tag">#-Sublime Text -UML -工具</a>
+          
+        </div>
+      
+
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+        <!-- JiaThis Button BEGIN -->
+<div class="jiathis_style">
+  <a class="jiathis_button_tsina"></a>
+  <a class="jiathis_button_tqq"></a>
+  <a class="jiathis_button_weixin"></a>
+  <a class="jiathis_button_cqq"></a>
+  <a class="jiathis_button_douban"></a>
+  <a class="jiathis_button_renren"></a>
+  <a class="jiathis_button_qzone"></a>
+  <a class="jiathis_button_kaixin001"></a>
+  <a class="jiathis_button_copy"></a>
+  <a href="http://www.jiathis.com/share" class="jiathis jiathis_txt jiathis_separator jtico jtico_jiathis" target="_blank"></a>
+  <a class="jiathis_counter_style"></a>
+</div>
+<script type="text/javascript" >
+  var jiathis_config={
+    hideMore:false
+  }
+</script>
+<script type="text/javascript" src="http://v3.jiathis.com/code/jia.js" charset="utf-8"></script>
+<!-- JiaThis Button END -->
+
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  <p>热评文章</p>
+  <div class="ds-top-threads" data-range="weekly" data-num-items="4"></div>
+
+
+          
+  <div class="comments" id="comments">
+    
+      <div class="ds-thread" data-thread-key="2016/03/14/sublime-diagram-plugin-draw-uml/"
+           data-title="使用Sublime Text插件：sublime_diagram_plugin进行作图" data-url="http://yoursite.com/2016/03/14/sublime-diagram-plugin-draw-uml/">
+      </div>
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel ">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.jpg"
+               alt="Marcos.Weng" />
+          <p class="site-author-name" itemprop="name">Marcos.Weng</p>
+          <p class="site-description motion-element" itemprop="description"></p>
+        </div>
+        <nav class="site-state motion-element">
+          <div class="site-state-item site-state-posts">
+            <a href="/archives">
+              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-name">日志</span>
+            </a>
+          </div>
+          
+          
+            <div class="site-state-item site-state-categories">
+              <a href="/categories">
+                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-name">分类</span>
+              </a>
+            </div>
+          
+
+          
+            <div class="site-state-item site-state-tags">
+              <a href="/tags">
+                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+      </section>
+
+      
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc-indicator-top post-toc-indicator">
+            <i class="fa fa-angle-double-up"></i>
+          </div>
+          <div class="post-toc">
+            
+              
+            
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#插件安装"><span class="nav-number">1.</span> <span class="nav-text">插件安装</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Graphviz"><span class="nav-number">1.1.</span> <span class="nav-text">安装Graphviz</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装Sublime-Text"><span class="nav-number">1.2.</span> <span class="nav-text">安装Sublime Text</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#安装插件"><span class="nav-number">1.3.</span> <span class="nav-text">安装插件</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#插件使用"><span class="nav-number">2.</span> <span class="nav-text">插件使用</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#绘制组件图"><span class="nav-number">2.1.</span> <span class="nav-text">绘制组件图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绘制时序图"><span class="nav-number">2.2.</span> <span class="nav-text">绘制时序图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绘制类图"><span class="nav-number">2.3.</span> <span class="nav-text">绘制类图</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#绘制流程图"><span class="nav-number">2.4.</span> <span class="nav-text">绘制流程图</span></a></li></ol></li></ol></div>
+            
+          </div>
+          <div class="post-toc-indicator-bottom post-toc-indicator">
+            <i class="fa fa-angle-double-down"></i>
+          </div>
+        </section>
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2016</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">Marcos.Weng</span>
+</div>
+
+<div class="powered-by">
+  Marcos-Weng
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+
+      </div>
+    </footer>
+
+    <div class="back-to-top">
+      <i class="fa fa-arrow-up"></i>
+    </div>
+  </div>
+
+  
+
+
+  
+
+
+
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+  <script type="text/javascript" src="/vendors/jquery/index.js?v=2.1.3"></script>
+
+  <script type="text/javascript" src="/vendors/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  <script type="text/javascript" src="/vendors/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/velocity/velocity.ui.min.js"></script>
+
+  <script type="text/javascript" src="/vendors/fancybox/source/jquery.fancybox.pack.js"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=0.5.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=0.5.0"></script>
+
+
+
+  
+  
+
+  
+  
+<script type="text/javascript" src="/js/src/scrollspy.js?v=0.5.0"></script>
+
+<script type="text/javascript" id="sidebar.toc.highlight">
+  $(document).ready(function () {
+    var tocSelector = '.post-toc';
+    var $tocSelector = $(tocSelector);
+    var activeCurrentSelector = '.active-current';
+
+    $tocSelector
+      .on('activate.bs.scrollspy', function () {
+        var $currentActiveElement = $(tocSelector + ' .active').last();
+
+        removeCurrentActiveClass();
+        $currentActiveElement.addClass('active-current');
+
+        $tocSelector[0].scrollTop = $currentActiveElement.position().top;
+      })
+      .on('clear.bs.scrollspy', function () {
+        removeCurrentActiveClass();
+      });
+
+    function removeCurrentActiveClass () {
+      $(tocSelector + ' ' + activeCurrentSelector)
+        .removeClass(activeCurrentSelector.substring(1));
+    }
+
+    function processTOC () {
+      getTOCMaxHeight();
+      toggleTOCOverflowIndicators();
+    }
+
+    function getTOCMaxHeight () {
+      var height = $('.sidebar').height() -
+                   $tocSelector.position().top -
+                   $('.post-toc-indicator-bottom').height();
+
+      $tocSelector.css('height', height);
+
+      return height;
+    }
+
+    function toggleTOCOverflowIndicators () {
+      tocOverflowIndicator(
+        '.post-toc-indicator-top',
+        $tocSelector.scrollTop() > 0 ? 'show' : 'hide'
+      );
+
+      tocOverflowIndicator(
+        '.post-toc-indicator-bottom',
+        $tocSelector.scrollTop() >= $tocSelector.find('ol').height() - $tocSelector.height() ? 'hide' : 'show'
+      )
+    }
+
+    $(document).on('sidebar.motion.complete', function () {
+      processTOC();
+    });
+
+    $('body').scrollspy({ target: tocSelector });
+    $(window).on('resize', function () {
+      if ( $('.sidebar').hasClass('sidebar-active') ) {
+        processTOC();
+      }
+    });
+
+    onScroll($tocSelector);
+
+    function onScroll (element) {
+      element.on('mousewheel DOMMouseScroll', function (event) {
+          var oe = event.originalEvent;
+          var delta = oe.wheelDelta || -oe.detail;
+
+          this.scrollTop += ( delta < 0 ? 1 : -1 ) * 30;
+          event.preventDefault();
+
+          toggleTOCOverflowIndicators();
+      });
+    }
+
+    function tocOverflowIndicator (indicator, action) {
+      var $indicator = $(indicator);
+      var opacity = action === 'show' ? 1 : 0;
+      $indicator.velocity ?
+        $indicator.velocity('stop').velocity({
+          opacity: opacity
+        }, { duration: 100 }) :
+        $indicator.stop().animate({
+          opacity: opacity
+        }, 100);
+    }
+
+  });
+</script>
+
+<script type="text/javascript" id="sidebar.nav">
+  $(document).ready(function () {
+    var html = $('html');
+    var TAB_ANIMATE_DURATION = 200;
+    var hasVelocity = $.isFunction(html.velocity);
+
+    $('.sidebar-nav li').on('click', function () {
+      var item = $(this);
+      var activeTabClassName = 'sidebar-nav-active';
+      var activePanelClassName = 'sidebar-panel-active';
+      if (item.hasClass(activeTabClassName)) {
+        return;
+      }
+
+      var currentTarget = $('.' + activePanelClassName);
+      var target = $('.' + item.data('target'));
+
+      hasVelocity ?
+        currentTarget.velocity('transition.slideUpOut', TAB_ANIMATE_DURATION, function () {
+          target
+            .velocity('stop')
+            .velocity('transition.slideDownIn', TAB_ANIMATE_DURATION)
+            .addClass(activePanelClassName);
+        }) :
+        currentTarget.animate({ opacity: 0 }, TAB_ANIMATE_DURATION, function () {
+          currentTarget.hide();
+          target
+            .stop()
+            .css({'opacity': 0, 'display': 'block'})
+            .animate({ opacity: 1 }, TAB_ANIMATE_DURATION, function () {
+              currentTarget.removeClass(activePanelClassName);
+              target.addClass(activePanelClassName);
+            });
+        });
+
+      item.siblings().removeClass(activeTabClassName);
+      item.addClass(activeTabClassName);
+    });
+
+    $('.post-toc a').on('click', function (e) {
+      e.preventDefault();
+      var targetSelector = NexT.utils.escapeSelector(this.getAttribute('href'));
+      var offset = $(targetSelector).offset().top;
+      hasVelocity ?
+        html.velocity('stop').velocity('scroll', {
+          offset: offset  + 'px',
+          mobileHA: false
+        }) :
+        $('html, body').stop().animate({
+          scrollTop: offset
+        }, 500);
+    });
+
+    // Expand sidebar on post detail page by default, when post has a toc.
+    NexT.motion.middleWares.sidebar = function () {
+      var $tocContent = $('.post-toc-content');
+
+      if (CONFIG.scheme !== 'Pisces' && (CONFIG.sidebar.display === 'post' || CONFIG.sidebar.display === 'always')) {
+        if ($tocContent.length > 0 && $tocContent.html().trim().length > 0) {
+          NexT.utils.displaySidebar();
+        }
+      }
+    };
+  });
+</script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=0.5.0"></script>
+
+
+
+  
+
+  
+    
+  
+
+  <script type="text/javascript">
+    var duoshuoQuery = {short_name:"marcos-blogs"};
+    (function() {
+      var ds = document.createElement('script');
+      ds.type = 'text/javascript';ds.async = true;
+      ds.id = 'duoshuo-script';
+      ds.src = (document.location.protocol == 'https:' ? 'https:' : 'http:') + '//static.duoshuo.com/embed.js';
+      ds.charset = 'UTF-8';
+      (document.getElementsByTagName('head')[0]
+      || document.getElementsByTagName('body')[0]).appendChild(ds);
+    })();
+  </script>
+
+  
+    
+  
+
+
+
+
+
+  
+  
+  
+
+  
+
+
+</body>
+</html>
