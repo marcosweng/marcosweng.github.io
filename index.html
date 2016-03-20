@@ -234,6 +234,217 @@
             
               
                 
+                <a class="post-title-link" href="/2016/03/20/java-concurrent/" itemprop="url">
+                  Java 并发编程：锁
+                </a>
+              
+            
+          </h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            <span class="post-meta-item-icon">
+              <i class="fa fa-calendar-o"></i>
+            </span>
+            <span class="post-meta-item-text">发表于</span>
+            <time itemprop="dateCreated" datetime="2016-03-20T21:30:29+08:00" content="2016-03-20">
+              2016-03-20
+            </time>
+          </span>
+
+          
+            <span class="post-category" >
+              &nbsp; | &nbsp;
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              <span class="post-meta-item-text">分类于</span>
+              
+                <span itemprop="about" itemscope itemtype="https://schema.org/Thing">
+                  <a href="/categories/Java/" itemprop="url" rel="index">
+                    <span itemprop="name">Java</span>
+                  </a>
+                </span>
+
+                
+                
+
+              
+            </span>
+          
+
+          
+            
+              <span class="post-comments-count">
+                &nbsp; | &nbsp;
+                <a href="/2016/03/20/java-concurrent/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/20/java-concurrent/" itemprop="commentsCount"></span>
+                </a>
+              </span>
+            
+          
+
+          
+
+          
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        
+          
+            <h2 id="Java的synchronized与Lock"><a href="#Java的synchronized与Lock" class="headerlink" title="Java的synchronized与Lock"></a>Java的synchronized与Lock</h2><p>Java的synchronized与Lock都可以实现同步的访问，两者的不同有：</p>
+<ul>
+<li>synchronized是Java内置的关键字，Lock是一个类，不是你Java语言内置的一种特性</li>
+<li>synchronized同步操作的方式比较单一，Lock可以根据自己需求进行定制，拥有更丰富的功能特性。</li>
+<li>synchronized同步操作完成后，不需要用户手动去释放锁，而Lock则需要用户手动去释放，从代码上讲synchronized更易用，Lock用不好的话，容易出现死锁。</li>
+<li>synchronized同步模式过于单一，性能与Lock相比较差。</li>
+</ul>
+<p>一般情况下，若对性能上不是具有特别要求的话，用synchronized比较不容易出错。但在性能要求较高的场景，选择合适的Lock，会具有更好的性能。比如：在具有大量的读取文件，写入文件较少的场景中，此时多线程去操作读，并不会发生冲突，只有写时才需要进行堵塞，若使用synchronized，则每次读都会堵塞，严重影响性能；若使用ReentrantLock,在读时加上读锁，在写时加上写锁，获取到的性能与synchronized相比是成线性增长的。</p>
+<h3 id="synchronized用法"><a href="#synchronized用法" class="headerlink" title="synchronized用法"></a>synchronized用法</h3><p>synchronized即可用在方法的申明上，也可用于某个代码块。</p>
+<pre><code>package com.marcos.learn.concurrent;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.stream.IntStream;
+
+/**
+ * Created by marcos on 16/3/21.
+ */
+public class SynchronizedObject {
+
+    Integer index = 0;
+
+    static Object object = new Object();
+    public synchronized void synchronizedExecute() {
+        System.out.println(&quot;方法上同步：&quot;+index++);
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+    }
+
+    public void codeBlockExecute(){
+        synchronized (object){
+            System.out.println(&quot;代码块同步&quot;+index++);
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+
+    public static void main(String[] args) {
+        SynchronizedObject object = new SynchronizedObject();
+        ExecutorService executorService = Executors.newFixedThreadPool(30);
+        IntStream.range(0, 100).forEach((i) -&gt; {
+            executorService.submit(object::synchronizedExecute);
+        });
+
+        executorService.shutdown();
+
+        ExecutorService executorService1 = Executors.newFixedThreadPool(30);
+        SynchronizedObject object1 = new SynchronizedObject();
+        IntStream.range(0, 100).forEach((i) -&gt; executorService1.submit(object1::codeBlockExecute));
+        executorService1.shutdown();
+        while (true){
+            try {
+                Thread.sleep(1000);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+}
+</code></pre><h3 id="简单的Lock用法"><a href="#简单的Lock用法" class="headerlink" title="简单的Lock用法"></a>简单的Lock用法</h3><pre><code>package com.marcos.learn.concurrent;
+
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.stream.IntStream;
+
+/**
+ * Created by marcos on 16/3/21.
+ */
+public class LockObject {
+
+    private ReentrantLock lock = new ReentrantLock();
+    int index = 0;
+    public void executeLock(){
+        lock.lock();
+        System.out.println(&quot;当前值为：&quot; + (index++));
+        try {
+            Thread.sleep(1000);
+        } catch (InterruptedException e) {
+            e.printStackTrace();
+        }
+        lock.unlock();
+    }
+
+    public static void main(String[] args){
+        LockObject object = new LockObject();
+        ExecutorService executorService = Executors.newFixedThreadPool(30);
+        IntStream.range(0,100).forEach((i)-&gt;executorService.submit(object::executeLock));
+    }
+}
+</code></pre>
+          
+        
+      
+    </div>
+
+    <div>
+      
+    </div>
+
+    <footer class="post-footer">
+      
+
+      
+
+      
+      
+        <div class="post-eof"></div>
+      
+    </footer>
+  </article>
+
+
+    
+      
+
+  
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">
+            
+            
+              
+                
                 <a class="post-title-link" href="/2016/03/14/sublime-diagram-plugin-draw-uml/" itemprop="url">
                   使用Sublime Text插件：sublime_diagram_plugin进行作图
                 </a>
@@ -399,7 +610,7 @@
         <nav class="site-state motion-element">
           <div class="site-state-item site-state-posts">
             <a href="/archives">
-              <span class="site-state-item-count">1</span>
+              <span class="site-state-item-count">2</span>
               <span class="site-state-item-name">日志</span>
             </a>
           </div>
@@ -407,7 +618,7 @@
           
             <div class="site-state-item site-state-categories">
               <a href="/categories">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">分类</span>
               </a>
             </div>
@@ -416,7 +627,7 @@
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">2</span>
+                <span class="site-state-item-count">1</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
