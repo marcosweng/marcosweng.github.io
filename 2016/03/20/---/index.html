@@ -41,7 +41,7 @@
 <link href="/css/main.css?v=0.5.0" rel="stylesheet" type="text/css" />
 
 
-  <meta name="keywords" content="Marcos's Blogs" />
+  <meta name="keywords" content="Java - 并发," />
 
 
 
@@ -64,14 +64,14 @@ synchronized同步操作的方式比较单一，Lock可以根据自己需求进�
 synchronized同步操作完成后，不需要用户手动去释放锁，而">
 <meta property="og:type" content="article">
 <meta property="og:title" content="Java 并发编程：锁">
-<meta property="og:url" content="http://yoursite.com/2016/03/20/java-concurrent/index.html">
+<meta property="og:url" content="http://yoursite.com/2016/03/20/---/index.html">
 <meta property="og:site_name" content="Marcos">
 <meta property="og:description" content="Java的synchronized与LockJava的synchronized与Lock都可以实现同步的访问，两者的不同有：
 
 synchronized是Java内置的关键字，Lock是一个类，不是你Java语言内置的一种特性
 synchronized同步操作的方式比较单一，Lock可以根据自己需求进行定制，拥有更丰富的功能特性。
 synchronized同步操作完成后，不需要用户手动去释放锁，而">
-<meta property="og:updated_time" content="2016-03-20T16:46:21.000Z">
+<meta property="og:updated_time" content="2016-03-22T15:28:22.000Z">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:title" content="Java 并发编程：锁">
 <meta name="twitter:description" content="Java的synchronized与LockJava的synchronized与Lock都可以实现同步的访问，两者的不同有：
@@ -86,7 +86,7 @@ synchronized同步操作完成后，不需要用户手动去释放锁，而">
   var NexT = window.NexT || {};
   var CONFIG = {
     scheme: 'Mist',
-    sidebar: {"position":"right","display":"post"},
+    sidebar: {"position":"right","display":"always"},
     fancybox: true,
     motion: true,
     duoshuo: {
@@ -286,8 +286,8 @@ synchronized同步操作完成后，不需要用户手动去释放锁，而">
             
               <span class="post-comments-count">
                 &nbsp; | &nbsp;
-                <a href="/2016/03/20/java-concurrent/#comments" itemprop="discussionUrl">
-                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/20/java-concurrent/" itemprop="commentsCount"></span>
+                <a href="/2016/03/20/---/#comments" itemprop="discussionUrl">
+                  <span class="post-comments-count ds-thread-count" data-thread-key="2016/03/20/---/" itemprop="commentsCount"></span>
                 </a>
               </span>
             
@@ -318,95 +318,34 @@ synchronized同步操作完成后，不需要用户手动去释放锁，而">
 </ul>
 <p>一般情况下，若对性能上不是具有特别要求的话，用synchronized比较不容易出错。但在性能要求较高的场景，选择合适的Lock，会具有更好的性能。比如：在具有大量的读取文件，写入文件较少的场景中，此时多线程去操作读，并不会发生冲突，只有写时才需要进行堵塞，若使用synchronized，则每次读都会堵塞，严重影响性能；若使用ReentrantLock,在读时加上读锁，在写时加上写锁，获取到的性能与synchronized相比是成线性增长的。</p>
 <h3 id="synchronized用法"><a href="#synchronized用法" class="headerlink" title="synchronized用法"></a>synchronized用法</h3><p>synchronized即可用在方法的申明上，也可用于某个代码块。</p>
-<pre><code>package com.marcos.learn.concurrent;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.stream.IntStream;
-
-/**
- * Created by marcos on 16/3/21.
- */
-public class SynchronizedObject {
-
-    Integer index = 0;
-
-    static Object object = new Object();
-    public synchronized void synchronizedExecute() {
-        System.out.println(&quot;方法上同步：&quot;+index++);
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-    }
-
-    public void codeBlockExecute(){
-        synchronized (object){
-            System.out.println(&quot;代码块同步&quot;+index++);
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-
-
-    public static void main(String[] args) {
-        SynchronizedObject object = new SynchronizedObject();
-        ExecutorService executorService = Executors.newFixedThreadPool(30);
-        IntStream.range(0, 100).forEach((i) -&gt; {
-            executorService.submit(object::synchronizedExecute);
-        });
-
-        executorService.shutdown();
-
-        ExecutorService executorService1 = Executors.newFixedThreadPool(30);
-        SynchronizedObject object1 = new SynchronizedObject();
-        IntStream.range(0, 100).forEach((i) -&gt; executorService1.submit(object1::codeBlockExecute));
-        executorService1.shutdown();
-        while (true){
-            try {
-                Thread.sleep(1000);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
-        }
-    }
-}
-</code></pre><h3 id="简单的Lock用法"><a href="#简单的Lock用法" class="headerlink" title="简单的Lock用法"></a>简单的Lock用法</h3><pre><code>package com.marcos.learn.concurrent;
-
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.stream.IntStream;
-
-/**
- * Created by marcos on 16/3/21.
- */
-public class LockObject {
-
-    private ReentrantLock lock = new ReentrantLock();
-    int index = 0;
-    public void executeLock(){
-        lock.lock();
-        System.out.println(&quot;当前值为：&quot; + (index++));
-        try {
-            Thread.sleep(1000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
-        lock.unlock();
-    }
-
-    public static void main(String[] args){
-        LockObject object = new LockObject();
-        ExecutorService executorService = Executors.newFixedThreadPool(30);
-        IntStream.range(0,100).forEach((i)-&gt;executorService.submit(object::executeLock));
-    }
-}
-</code></pre>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">`package com.marcos.learn.concurrent;</span><br><span class="line"></span><br><span class="line">import java.util.concurrent.ExecutorService;</span><br><span class="line">import java.util.concurrent.Executors;</span><br><span class="line">import java.util.concurrent.locks.ReentrantLock;</span><br><span class="line">import java.util.stream.IntStream;</span><br><span class="line"></span><br><span class="line">/**  * Created by marcos on 16/3/21.</span><br><span class="line">	 */</span><br><span class="line">	public class LockObject &#123;</span><br><span class="line"></span><br><span class="line">	private ReentrantLock lock = new ReentrantLock();</span><br><span class="line">	int index = 0;</span><br><span class="line">	public void executeLock()&#123;</span><br><span class="line">	lock.lock();</span><br><span class="line">	System.out.println(&quot;当前值为：&quot; + (index++));</span><br><span class="line">	try &#123;</span><br><span class="line">	Thread.sleep(1000);</span><br><span class="line">	&#125; catch (InterruptedException e) &#123;</span><br><span class="line">	e.printStackTrace();</span><br><span class="line">	&#125;</span><br><span class="line">	lock.unlock();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[]() args)&#123;</span><br><span class="line">	LockObject object = new LockObject();</span><br><span class="line">	ExecutorService executorService = Executors.newFixedThreadPool(30);</span><br><span class="line">	IntStream.range(0,100).forEach((i)-\&gt;executorService.submit(object::executeLock));</span><br><span class="line">	&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>`</p>
+<h3 id="简单的Lock用法"><a href="#简单的Lock用法" class="headerlink" title="简单的Lock用法"></a>简单的Lock用法</h3><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line">`package com.marcos.learn.concurrent;</span><br><span class="line"></span><br><span class="line">import java.util.concurrent.ExecutorService;</span><br><span class="line">import java.util.concurrent.Executors;</span><br><span class="line">import java.util.concurrent.locks.ReentrantLock;</span><br><span class="line">import java.util.stream.IntStream;</span><br><span class="line"></span><br><span class="line">/**  * Created by marcos on 16/3/21.</span><br><span class="line">	 */</span><br><span class="line">	public class LockObject &#123;</span><br><span class="line"></span><br><span class="line">	private ReentrantLock lock = new ReentrantLock();</span><br><span class="line">	int index = 0;</span><br><span class="line">	public void executeLock()&#123;</span><br><span class="line">	lock.lock();</span><br><span class="line">	System.out.println(&quot;当前值为：&quot; + (index++));</span><br><span class="line">	try &#123;</span><br><span class="line">	Thread.sleep(1000);</span><br><span class="line">	&#125; catch (InterruptedException e) &#123;</span><br><span class="line">	e.printStackTrace();</span><br><span class="line">	&#125;</span><br><span class="line">	lock.unlock();</span><br><span class="line">	&#125;</span><br><span class="line"></span><br><span class="line">	public static void main(String[]() args)&#123;</span><br><span class="line">	LockObject object = new LockObject();</span><br><span class="line">	ExecutorService executorService = Executors.newFixedThreadPool(30);</span><br><span class="line">	IntStream.range(0,100).forEach((i)-\&gt;executorService.submit(object::executeLock));</span><br><span class="line">	&#125;</span><br><span class="line">	&#125;</span><br></pre></td></tr></table></figure>
+<p>`</p>
+<h2 id="Lock基本介绍"><a href="#Lock基本介绍" class="headerlink" title="Lock基本介绍"></a>Lock基本介绍</h2><p>jdk自带的锁，基本都实现于java.concurrent.locks.Lock和java.concurrent.locks.ReadWriteLock，Lock的基本方法有：</p>
+<ul>
+<li>lock() 主要用于获取锁</li>
+<li>lockInterruptibly() 如果线程正在等待锁，可调用此方法，中断线程的等待。</li>
+<li>tryLock() 尝试获取锁，如果获取锁成功，则返回true，否则返回false</li>
+<li>tryLock(long time, TimeUnit unit) 在一定时间内尝试获取锁，如果获取锁成功，则返回true，否则返回false</li>
+<li>unlock() 释放锁</li>
+<li>newCondition() 获取锁的释放和等待的条件，有点类似于线程的await和notify</li>
+</ul>
+<p>ReadWriteLock的基本方法有：</p>
+<ul>
+<li>readLock() 获取读锁</li>
+<li>writeLock() 获取写锁<h3 id="锁的基本实现"><a href="#锁的基本实现" class="headerlink" title="锁的基本实现"></a>锁的基本实现</h3><h4 id="ReentrantLock-重入锁"><a href="#ReentrantLock-重入锁" class="headerlink" title="ReentrantLock 重入锁"></a>ReentrantLock 重入锁</h4><blockquote>
+<p>ReentrantLock 将由最近成功获得锁，并且还没有释放该锁的线程所拥有。当锁没有被另一个线程所拥有时，调用 lock 的线程将成功获取该锁并返回。如果当前线程已经拥有该锁，此方法将立即返回。可以使用 isHeldByCurrentThread() 和 getHoldCount() 方法来检查此情况是否发生。</p>
+</blockquote>
+</li>
+</ul>
+<p>重入锁，故名思意，就是同个线程内，可重复获取同一个锁，而不发生阻塞。看下面一段代码：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">`package com.marcos.learn.concurrent;</span><br><span class="line"></span><br><span class="line">import java.util.concurrent.locks.ReentrantLock;</span><br><span class="line"></span><br><span class="line">/**  * Created by marcos on 16/3/22.</span><br><span class="line"> */</span><br><span class="line">public class ReentrantLockTest &#123;</span><br><span class="line"></span><br><span class="line">public static void main(String[]() args)&#123;</span><br><span class="line">ReentrantLock lock = new ReentrantLock();</span><br><span class="line">lock.lock();</span><br><span class="line">System.out.println(&quot;获取锁成功&quot;);</span><br><span class="line">System.out.println(&quot;同个线程内再次去获取锁&quot;);</span><br><span class="line">lock.lock();</span><br><span class="line">System.out.println(&quot;获取锁成功&quot;);</span><br><span class="line"></span><br><span class="line">lock.unlock();</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>`<br>运行后，可看到在第二次获取锁时，并没有发生阻塞现象。<br>重入锁的构造方法可接收一个<em>公平</em>的构造参数，当设置为公平锁时，通常来说，等待时间最长（即最先进入锁等待的线程），会先获取到锁，不设置公平参数时，默认是不公平锁。原因是使用公平锁总体的吞吐量会很低，因为所有的处理线程只是按照进入顺序去获取锁，可能有的线程在获取到锁之后，处理速度很慢，会导致其他的线程发生严重堵塞。而非公平锁，则按照随机分配，哪个线程会优先获取到锁是不固定的，性能上会更好点。</p>
+<blockquote>
+<p>注：<em>公平锁在在使用tryLock时，并未采用公平设置。</em></p>
+</blockquote>
+<h4 id="ReentrantReadWriteLock-读写重入锁"><a href="#ReentrantReadWriteLock-读写重入锁" class="headerlink" title="ReentrantReadWriteLock 读写重入锁"></a>ReentrantReadWriteLock 读写重入锁</h4>
       
     </div>
 
@@ -417,6 +356,12 @@ public class LockObject {
     </div>
 
     <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/Java-并发/" rel="tag">#Java - 并发</a>
+          
+        </div>
       
 
       
@@ -481,8 +426,8 @@ public class LockObject {
           
   <div class="comments" id="comments">
     
-      <div class="ds-thread" data-thread-key="2016/03/20/java-concurrent/"
-           data-title="Java 并发编程：锁" data-url="http://yoursite.com/2016/03/20/java-concurrent/">
+      <div class="ds-thread" data-thread-key="2016/03/20/---/"
+           data-title="Java 并发编程：锁" data-url="http://yoursite.com/2016/03/20/---/">
       </div>
     
   </div>
@@ -544,7 +489,7 @@ public class LockObject {
           
             <div class="site-state-item site-state-tags">
               <a href="/tags">
-                <span class="site-state-item-count">1</span>
+                <span class="site-state-item-count">2</span>
                 <span class="site-state-item-name">标签</span>
               </a>
             </div>
@@ -577,7 +522,7 @@ public class LockObject {
               
             
             
-              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java的synchronized与Lock"><span class="nav-number">1.</span> <span class="nav-text">Java的synchronized与Lock</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized用法"><span class="nav-number">1.1.</span> <span class="nav-text">synchronized用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单的Lock用法"><span class="nav-number">1.2.</span> <span class="nav-text">简单的Lock用法</span></a></li></ol></li></ol></div>
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#Java的synchronized与Lock"><span class="nav-number">1.</span> <span class="nav-text">Java的synchronized与Lock</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#synchronized用法"><span class="nav-number">1.1.</span> <span class="nav-text">synchronized用法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#简单的Lock用法"><span class="nav-number">1.2.</span> <span class="nav-text">简单的Lock用法</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Lock基本介绍"><span class="nav-number">2.</span> <span class="nav-text">Lock基本介绍</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#锁的基本实现"><span class="nav-number">2.1.</span> <span class="nav-text">锁的基本实现</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#ReentrantLock-重入锁"><span class="nav-number">2.1.1.</span> <span class="nav-text">ReentrantLock 重入锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#ReentrantReadWriteLock-读写重入锁"><span class="nav-number">2.1.2.</span> <span class="nav-text">ReentrantReadWriteLock 读写重入锁</span></a></li></ol></li></ol></li></ol></div>
             
           </div>
           <div class="post-toc-indicator-bottom post-toc-indicator">
